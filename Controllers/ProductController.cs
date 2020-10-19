@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using SampleAPIHost.Models;
+using SampleAPIHost.Repository;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -18,6 +19,7 @@ namespace SampleAPIHost.Controllers
         {
             this._repository = repository;
         }
+
 
         #region Sample
         // GET: api/<ProductController>
@@ -70,42 +72,35 @@ namespace SampleAPIHost.Controllers
 
 
         [HttpPost("questions")]
-        public RequestResponse GetNextOptions([FromBody] RequestResponse recievedResponse)
+        public RequestResponse GetNextQuestion([FromBody] RequestResponse recievedResponse)
         {
             var sendResponse = new RequestResponse();
-            var layerAndResponse = new string[]{};
-            layerAndResponse.Append(recievedResponse.layer);
-            for (int i = 0; i < recievedResponse.layerMembers.Length; i++)
-            {
-                layerAndResponse.Append(recievedResponse.layerMembers[i]);
-            }
-
             var suggestionPathObj = new SuggestionPaths();
-            sendResponse.layer=suggestionPathObj.NextLayer(recievedResponse.layer);
-            sendResponse.layerMembers = suggestionPathObj.LayerMembers(sendResponse.layer);
-            sendResponse.choiceList.Append(layerAndResponse);
+            sendResponse.Layer = suggestionPathObj.NextLayer(recievedResponse.Layer);
+            sendResponse.LayerMembers = suggestionPathObj.NextLayerMembers(recievedResponse.LayerMembers);
+
+            sendResponse.ChoiceDictionary = recievedResponse.ChoiceDictionary;
+            sendResponse.ChoiceDictionary.Add(recievedResponse.Layer, recievedResponse.LayerMembers);
 
             return sendResponse;
         }
 
         //GET: api/<ProductController>/question
+
         [HttpGet("questions")]
         public RequestResponse GetSampleRequestResponse()
         {
             var sendResponse = new RequestResponse();
-            var layerAndResponse = new string[] { };
-            layerAndResponse.Append("Layer1");
-            for (int i = 0; i < 1; i++)
-            {
-                layerAndResponse.Append("Layer1Response");
-            }
-
-            var suggestionPathObj = new SuggestionPaths();
-            sendResponse.layer = suggestionPathObj.NextLayer("Layer1");
-            sendResponse.layerMembers = suggestionPathObj.LayerMembers("Layer1Response");
-            sendResponse.choiceList.Append(layerAndResponse);
-
             return sendResponse;
+        }
+
+        //GET: api/<ProductController>/question/showproducts
+
+        [HttpGet("questions/showproducts")]
+        public IEnumerable<Products> Get([FromBody] RequestResponse recievedResponse)
+        {
+            return this._repository.GetAllProductsBasedOnQuestions(recievedResponse.ChoiceDictionary);
+
         }
     }
 }

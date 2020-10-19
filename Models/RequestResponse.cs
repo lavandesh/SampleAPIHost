@@ -7,22 +7,25 @@ namespace SampleAPIHost.Models
 {
     public class RequestResponse
     {
-        public List<string[]> choiceList;
-        public string layer;
-        public string[] layerMembers;
+        public Dictionary<string, string[]> ChoiceDictionary { get; set; }
+        public string Layer { get; set; }
+        public string[] LayerMembers { get; set; }
 
         public RequestResponse()
         {
-            this.choiceList= new List<string[]>{} ;
-            this.layerMembers = new string[]{};
-            this.layer = "";
+
+            this.ChoiceDictionary= new Dictionary<string, string[]>();
+            this.LayerMembers = new string[]{"default1","default2"};
+            this.Layer = "default";
+            this.ChoiceDictionary.Add("key1", this.LayerMembers);
+            this.ChoiceDictionary.Add("key2", this.LayerMembers);
         }
 
-        public RequestResponse(List<string[]> choices, string[] layerMembers, string nextLayer)
+        public RequestResponse(Dictionary<string, string[]> choices, string[] layerMembers, string nextLayer)
         {
-            this.choiceList = choices;
-            this.layerMembers = layerMembers;
-            this.layer = nextLayer;
+            this.ChoiceDictionary = choices;
+            this.LayerMembers = layerMembers;
+            this.Layer = nextLayer;
         }
     }
 }

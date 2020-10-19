@@ -10,5 +10,7 @@ namespace SampleAPIHost.Repository
     {
         public void AddNewProduct(Products newProduct);
         public IEnumerable<Products> GetAllProducts();
+
+        public IEnumerable<Products> GetAllProductsBasedOnQuestions(Dictionary<string, string[]> choiceDictionary);
     }
 }

@@ -30,6 +30,7 @@ namespace SampleAPIHost
             services.AddControllers();
 
             services.AddSingleton<Repository.IProductRepository, Repository.ProductRepository>();
+            services.AddSingleton<Repository.IRequestResponseHandling, Repository.RequestResponseHandling>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
